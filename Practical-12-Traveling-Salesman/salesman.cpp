@@ -1,0 +1,60 @@
+#include <iostream>
+#include <algorithm>
+using namespace std;
+
+#define INF 999999
+
+int n;
+int cost[10][10];
+int dp[10][1 << 10];
+
+int tsp(int pos, int mask) {
+
+    if (mask == (1 << n) - 1) {
+        return cost[pos][0];
+    }
+
+    if (dp[pos][mask] != -1) {
+        return dp[pos][mask];
+    }
+
+    int ans = INF;
+
+    for (int city = 0; city < n; city++) {
+
+        if ((mask & (1 << city)) == 0) {
+
+            int newCost = cost[pos][city] +
+                          tsp(city, mask | (1 << city));
+
+            ans = min(ans, newCost);
+        }
+    }
+
+    return dp[pos][mask] = ans;
+}
+
+int main() {
+
+    cout << "Enter number of cities: ";
+    cin >> n;
+
+    cout << "Enter cost matrix:\n";
+
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            cin >> cost[i][j];
+        }
+    }
+
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < (1 << n); j++) {
+            dp[i][j] = -1;
+        }
+    }
+
+    cout << "Minimum travelling cost = "
+         << tsp(0, 1) << endl;
+
+    return 0;
+}
